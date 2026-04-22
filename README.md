@@ -38,7 +38,18 @@ Chatting App/
 
 ---
 
-## ⚙️ Setup Instructions
+## Run With Docker
+
+```bash
+ docker-compose up --build
+ ```
+
+Open:
+
+Frontend: http://localhost:3000
+Backend: http://localhost:9096
+
+## ⚙️  Manual Setup Instructions
 
 ### 🔹 1. Clone the repository
 
