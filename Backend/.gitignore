@@ -1,0 +1,86 @@
+# ===============================
+
+# Spring Boot / Java / Maven
+
+# ===============================
+
+# Build output
+
+target/
+
+# Maven wrapper (optional to ignore)
+
+.mvn/wrapper/maven-wrapper.jar
+
+# Logs
+
+*.log
+
+# Temporary files
+
+*.tmp
+*.swp
+*.swo
+
+# ===============================
+
+# Application Config (Secrets)
+
+# ===============================
+
+# Ignore real configs with secrets
+
+application.properties
+
+
+# Keep example config
+
+!application-example.properties
+
+# ===============================
+
+# IDE Files
+
+# ===============================
+
+# IntelliJ IDEA
+
+.idea/
+*.iml
+
+# VS Code
+
+.vscode/
+
+# Eclipse / STS
+
+.project
+.classpath
+.settings/
+
+# ===============================
+
+# OS Files
+
+# ===============================
+
+.DS_Store
+Thumbs.db
+
+# ===============================
+
+# Compiled Files
+
+# ===============================
+
+*.class
+
+# ===============================
+
+# Archives
+
+# ===============================
+
+*.jar
+*.war
+*.ear

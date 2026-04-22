@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Private Chat</title>
+</head>
+<body>
+
+<h2>Private Chat App</h2>
+
+<input type="text" id="sender" placeholder="Your name"><br><br>
+<input type="text" id="receiver" placeholder="Receiver name"><br><br>
+<input type="text" id="message" placeholder="Message"><br><br>
+
+<button onclick="connect()">Connect</button>
+<button onclick="sendMessage()">Send</button>
+
+<ul id="messages"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+
+<script>
+    let stompClient = null;
+
+   function connect() {
+    let token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTQU0iLCJpYXQiOjE3NzY3NTIwMzYsImV4cCI6MTc3Njc1NTYzNn0.ExwnJ54Octb4E2NHzDePh8fKtUMDr0HGhEM4XJJCZKk";
+    let socket = new SockJS("http://localhost:9096/chat?token=" + token);
+    stompClient = Stomp.over(socket);
+
+    let username = document.getElementById("sender").value;
+    //let token = localStorage.getItem("token");
+    
+    
+    stompClient.connect({
+        Authorization : "Bearer " + token
+    }, function (frame) {
+
+        // 🔥 Subscribe to your own channel
+        stompClient.subscribe("/topic/" + username, function (msg) {
+            showMessage(JSON.parse(msg.body));
+        });
+         stompClient.send("/app/private", {}, JSON.stringify({
+            sender: username,
+            type: "JOIN"
+        }));
+        loadChatHistory();
+    });
+    
+}
+
+    function sendMessage() {
+        let sender = document.getElementById("sender").value;
+        let receiver = document.getElementById("receiver").value;
+        let message = document.getElementById("message").value;
+
+        stompClient.send("/app/private", {}, JSON.stringify({
+            sender: sender,
+            receiver: receiver,
+            content: message,
+            
+        }));
+        
+    }
+    async function loadChatHistory() {
+    let sender = document.getElementById("sender").value;
+    let receiver = document.getElementById("receiver").value;
+    console.log("Sender:",sender);
+    console.log("Receiver:",receiver);
+    if (!sender || !receiver) {
+        alert("Enter both sender and receiver");
+        return;
+    }
+    //let token = localStorage.getItem("token");
+    let token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTQU0iLCJpYXQiOjE3NzY3NTIwMzYsImV4cCI6MTc3Njc1NTYzNn0.ExwnJ54Octb4E2NHzDePh8fKtUMDr0HGhEM4XJJCZKk";
+    let response = await fetch(
+        `http://localhost:9096/messages/chat?u1=${sender}&u2=${receiver}`,
+        {
+            headers:{
+                "Authorization":"Bearer "+token
+            }
+        }
+    );
+    
+    let messages = await response.json();
+
+    console.log("History:", messages); // 🔥 DEBUG
+
+    document.getElementById("messages").innerHTML = "";
+
+    messages.forEach(msg => {
+        showMessage(msg);
+    });
+}
+
+    function showMessage(message) {
+        let li = document.createElement("li");
+        li.textContent = message.sender + " → " + message.receiver + " : " + message.content;
+        document.getElementById("messages").appendChild(li);
+    }
+</script>
+
+</body>
+</html>
